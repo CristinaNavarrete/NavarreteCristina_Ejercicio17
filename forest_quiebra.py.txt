@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from pandas.plotting import scatter_matrix
+import pandas as pd # para leer datos
+import sklearn.ensemble # para el random forest
+import sklearn.model_selection # para split train-test
+import sklearn.metrics # para calcular el f1-score
+%matplotlib inline
+# Carga datos
+
+data = pd.read_csv('datos.csv', ';')
+features = pd.read_csv('features.csv', ';')# Nombre de las columnas
+
+quiebra=data['Column65']#Los unos significa que sí quebró
+
+
+#La columna 37,21,27,60 tiene muchos errores en bastantes datos(ELIMINAMOS COLUMNAS)
+data = data.drop(['Column37','Column21', 'Column27','Column60'],axis=1)
+features= features.drop([36,20,26,59], axis=0)
+
+arr = data.to_numpy()
+
+arr=='?'
+(arr != '?').all(axis=1)
+row_mask = (arr != '?').all(axis=1)
+print(row_mask)
+print(len(arr))
+
+
+
+print(len(arr[row_mask,:]))
+
+dataf=arr[row_mask,:]
+quiebraf=dataf[:,-1]
+
+print(arr[2])
+#predictors
+
+
+X_train, X_test1, y_train, y_test1 = sklearn.model_selection.train_test_split(dataf, quiebraf, test_size=0.5)
+X_test, X_val, y_test, y_val= sklearn.model_selection.train_test_split(X_test1, y_test1, test_size=0.6)
+
+
+#Filtrar por cantidad de no datos en una fila e 10% de los predictores es decir 6 casillas en error hacen que se elimine ese dato pero como ya quitamos4 columans serán 2 signos de interrogación o más
+#def filtrar(data,n):
+ #   dataf=data
+  #  for i in range (len(data)):
+   #     count=0
+    #    for j in range(len(data[i])):
+     #       if data[i,j]=='?':
+      #          count=count+1
+       # if count>=n:
+        #    dataf=np.delete(data, i , axis=0)
+    #return dataf
+    
+
+#Vamos a probar cuántos datos perdemos borrando los datos con 1 signo de ? 
+#data_n=filtrar(arr,1)
+#print(len(data_n))
+
+
+
+
